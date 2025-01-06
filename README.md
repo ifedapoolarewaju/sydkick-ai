@@ -2,7 +2,7 @@
 
 AI Assistant that is right there when you need it.
 
-SydKick is a Desktop application that you can download from the [Website](https://sydkick.ai)
+SydKick is a Desktop application designed to enhance your productivity by bringing AI assistance directly to your screen. You can download the App from the [Website](https://sydkick.ai)
 
 ## Why is SydKick Cool?
 
@@ -15,3 +15,6 @@ SydKick is a Desktop application that you can download from the [Website](https:
 At the moment, the LLM Models integrated are:
 
 - Open AI (gpt-4o, gpt-4o-mini, o1, o1-mini)
+- Claude (Coming soon)
+- Gemini (Coming soon)
+- Others as they become available
