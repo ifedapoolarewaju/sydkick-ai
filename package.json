@@ -1,0 +1,147 @@
+{
+  "name": "SydKick",
+  "version": "1.0.0",
+  "private": true,
+  "main": "build/src/electron/main.js",
+  "dependencies": {
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^18.15.12",
+    "@types/react": "^18.0.37",
+    "@types/react-dom": "^18.0.11",
+    "antd": "^5.1.0",
+    "axios": "^1.7.9",
+    "electron-devtools-installer": "^3.2.0",
+    "electron-is-dev": "^2.0.0",
+    "electron-lisenser": "^0.0.7",
+    "electron-log": "^5.2.0",
+    "electron-reload": "^2.0.0-alpha.1",
+    "electron-updater": "^6.3.9",
+    "emoji-picker-react": "^4.4.12",
+    "extendable-media-recorder": "^9.2.17",
+    "extendable-media-recorder-wav-encoder": "^7.0.121",
+    "form-data": "^4.0.1",
+    "lodash": "^4.17.21",
+    "node-emoji": "^2.1.0",
+    "openai": "^4.76.3",
+    "react": "^18.2.0",
+    "react-chat-elements": "^12.0.10",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^4.0.11",
+    "react-infinite-scroll-component": "^6.1.0",
+    "react-markdown": "^9.0.1",
+    "react-scripts": "5.0.1",
+    "react-syntax-highlighter": "^15.6.1",
+    "typescript": "^5.6.3",
+    "use-clean-effect": "^0.1.5"
+  },
+  "devDependencies": {
+    "@electron/notarize": "^2.5.0",
+    "@testing-library/jest-dom": "^5.16.5",
+    "@testing-library/react": "^14.0.0",
+    "@testing-library/user-event": "^14.4.3",
+    "@types/electron-devtools-installer": "^2.2.5",
+    "@types/jest": "^29.4.0",
+    "@types/lodash": "^4.14.198",
+    "@types/node": "^18.15.12",
+    "@types/react": "^18.0.28",
+    "@types/react-dom": "^18.0.11",
+    "@types/react-syntax-highlighter": "^15.5.13",
+    "concurrently": "^8.0.1",
+    "cross-env": "^7.0.3",
+    "electron": "^33.0.2",
+    "electron-builder": "^25.1.8",
+    "fork-ts-checker-webpack-plugin": "^6.5.3",
+    "wait-on": "^7.0.1"
+  },
+  "overrides": {
+    "typescript": "^5.6.3"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build && echo 'removing root slash from static files path' && sed -i '' -e 's:/static/:static/:g' ./build/index.html && . ./bin/postbuild.sh",
+    "eject": "react-scripts eject",
+    "lint": "eslint 'src/**/*.{ts,tsx}' 'electron/**/*.ts'",
+    "lint:fix": "eslint --fix 'src/**/*.{ts,tsx}' 'electron/**/*.ts'",
+    "test": "react-scripts test",
+    "electron:dev": "concurrently \"cross-env BROWSER=none yarn start\" \"wait-on http://127.0.0.1:3000 && tsc -p src/electron -w\" \"wait-on http://127.0.0.1:3000 && tsc -p src/electron && electron .\"",
+    "electron:build": "yarn build && tsc -p src/electron && electron-builder",
+    "electron:dist:test": "yarn build && tsc -p src/electron && electron-builder --mac --dir",
+    "electron:dist": "yarn build && tsc -p src/electron && electron-builder -mwl --x64 --publish never",
+    "electron:dist:linux": "yarn build && tsc -p src/electron && electron-builder -l --x64 --publish never",
+    "electron:dist:mac": "yarn build && tsc -p src/electron && electron-builder -m --publish never",
+    "electron:dist:win": "yarn build && tsc -p src/electron && electron-builder -w --publish never"
+  },
+  "build": {
+    "publish": {
+      "provider": "github",
+      "owner": "ifedapoolarewaju",
+      "repo": "sydkick-ai"
+    },
+    "appId": "com.ifedapoolarewaju.desktop.sydkick",
+    "productName": "SydKick",
+    "copyright": "ifedapo Olarewaju 2024",
+    "asar": true,
+    "afterSign": "bin/notarize.js",
+    "mac": {
+      "target": {
+        "target": "default",
+        "arch": [
+          "arm64",
+          "x64"
+        ]
+      },
+      "type": "distribution",
+      "hardenedRuntime": true,
+      "entitlements": "assets/entitlements.mac.plist",
+      "entitlementsInherit": "assets/entitlements.mac.plist",
+      "extendInfo": {
+        "NSMicrophoneUsageDescription": "This app requires access to the microphone for voice input.",
+        "NSScreenCaptureUsageDescription": "This app needs to capture a screenshot of your screen in order for AI to assist with questions on your display. Screenshots will only be captured when the AI 'Voice and Screen' button is clicked"
+      },
+      "gatekeeperAssess": false,
+      "category": "public.app-category.productivity"
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "portable"
+      ],
+      "publisherName": "ifedapoolarewaju"
+    },
+    "linux": {
+      "target": [
+        "AppImage",
+        "zip"
+      ],
+      "maintainer": "Ifedapo Olarewaju <ifedapoolarewaju@gmail.com>"
+    },
+    "extends": null,
+    "files": [
+      "build/**/*"
+    ],
+    "directories": {
+      "buildResources": "assets"
+    }
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  }
+}
