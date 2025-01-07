@@ -183,8 +183,15 @@ function Home() {
                 <img src="img/voice.png" alt="" width="25px" />
             </Button>
         </Tooltip>,
-        // blank gap for spacing between buttons
-        <div style={{width: '40px'}}></div>,
+        <Tooltip title='Hide' placement='left' arrow={false} mouseEnterDelay={2}>
+            <Button
+                style={{ width: "40px", height: "40px", borderRadius: "50%", color: '#999' }}
+                className='no-dd-able'
+                onClick={() => window.bridge.hideMainWindow()}
+            >
+                —
+            </Button>
+        </Tooltip>,
         <Tooltip
             title='Voice and Screen'
             placement='left'
@@ -244,6 +251,8 @@ function Home() {
                 <img src="img/controls.png" alt="" width="15px" />
             </Button>
         </Tooltip>,
+        // blank gap for spacing between buttons
+        <div style={{width: '40px'}}></div>,
         <Tooltip title='Help' placement='right' arrow={false} mouseEnterDelay={2}>
             <Button
                 style={{ width: "40px", height: "40px", borderRadius: "50%" }}
@@ -251,15 +260,6 @@ function Home() {
                 onClick={() => window.bridge.openHelpWindow()}
             >
                 <img src="img/help.png" alt="" width="15px" />
-            </Button>
-        </Tooltip>,
-        <Tooltip title='Hide' placement='left' arrow={false} mouseEnterDelay={2}>
-            <Button
-                style={{ width: "40px", height: "40px", borderRadius: "50%", color: '#999' }}
-                className='no-dd-able'
-                onClick={() => window.bridge.hideMainWindow()}
-            >
-                —
             </Button>
         </Tooltip>,
     ]
