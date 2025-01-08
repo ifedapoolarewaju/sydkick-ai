@@ -1,6 +1,6 @@
 {
   "name": "SydKick",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "private": true,
   "main": "build/src/electron/main.js",
   "dependencies": {

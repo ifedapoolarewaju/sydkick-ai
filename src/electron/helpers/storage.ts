@@ -76,7 +76,7 @@ export async function deleteFullPath (fullPath: string): Promise<boolean> {
 
 export async function loadResourceFile<T> (fileName: string): Promise<T | void> {
     const steps = [fileName]
-    const fullPath = path.join(`${__dirname}/../../resources`, ...steps)
+    const fullPath = path.join(`${__dirname}/../../../resources`, ...steps)
 
     try {
         return JSON.parse(fs.readFileSync(fullPath, 'utf8'))

@@ -39,11 +39,11 @@ function Home() {
             customEncoderRegistered = true
         }
 
-        const stream = await navigator.mediaDevices.getUserMedia({ audio: true })
+        const audioInputStream = await navigator.mediaDevices.getUserMedia({ audio: true })
         // uncomment next line if you require wav audio. E.g if you are sending
         // the audio to open AI's audio generator endpoint
         // audioInputMediaRecorder = new WavMediaRecorder(stream, { mimeType: 'audio/wav' })
-        audioInputMediaRecorder = new MediaRecorder(stream)
+        audioInputMediaRecorder = new MediaRecorder(audioInputStream)
         let audioInputChunks: Blob[] = []
 
         // Handle audio data as it becomes available
@@ -63,6 +63,9 @@ function Home() {
 
             const audioBlob = new Blob(audioInputChunks, { type: 'audio/webm' })
             const arrayBuffer = await audioBlob.arrayBuffer()
+
+            audioInputStream.getAudioTracks().forEach((i) => i.stop())
+
             if (isCancelled(newRequestId)) {
                 return
             }
@@ -311,6 +314,7 @@ function Home() {
             </Space>}
 
             {audioResp && <audio
+                style={{ display: 'none' }}
                 key="audio-player"
                 src={audioResp}
                 ref={audioRef}
