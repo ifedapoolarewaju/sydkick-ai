@@ -8,7 +8,7 @@ export function QuickStart () {
             <Space direction='vertical' style={{ width: '100%', paddingTop: '10px' }} size="middle">
                 <Space direction='vertical' style={{ width: '100%' }} size="small">
                     <Typography.Text style={{ fontSize: '15px' }}>
-                        Press and HOLD the mic button to speak. Release the mic button once you are done speaking.
+                        Click the mic button to speak. Click the "stop" button once you are done speaking.
                     </Typography.Text>
                 </Space>
 

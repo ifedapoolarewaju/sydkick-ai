@@ -1,6 +1,6 @@
 import { ipcMain, shell } from 'electron'
 import * as llm from './llm'
-import { getScreenshot } from './helpers'
+import { getCurrentDisplay, getScreenshot } from './helpers'
 import { AUDIO_DATA_CHUNK_EVENT } from './helpers/constants'
 import { allWindows, createPopUpWindow, hideAllWindows } from './windows'
 import { getSettings, saveSettings, AppSettings } from './settings'
@@ -11,7 +11,8 @@ export function addIpcHandlers () {
         const promises = [llm.audioToText(audioInput)]
         if (includeScreenShot) {
             console.log('getting screenshot and audio', Date.now())
-            promises.push(getScreenshot())
+            const forDisplay = allWindows.main ? getCurrentDisplay(allWindows.main) : undefined
+            promises.push(getScreenshot(forDisplay))
         }
 
         const evtVal = includeScreenShot ? 'with-screenshot' : 'no-screenshot'

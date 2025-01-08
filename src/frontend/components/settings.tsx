@@ -75,7 +75,6 @@ export function Settings () {
                         options={[
                             { value: 'gpt-4o', label: 'GPT-4o' },
                             { value: 'gpt-4o-mini', label: 'GPT-4o-mini' },
-                            { value: 'o1', label: 'o1' },
                             { value: 'o1-mini', label: 'o1-mini' },
 
                         ]}

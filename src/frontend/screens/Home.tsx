@@ -24,6 +24,10 @@ function Home() {
     // ref for audio element
     const audioRef = useRef<HTMLAudioElement>(null)
 
+    const beginOrEndRecording: MouseEventHandler<HTMLButtonElement> = async (e) => {
+        recording ? endRecording(e) : beginRecording(e)
+    }
+
     const beginRecording: MouseEventHandler<HTMLButtonElement> = async (e) => {
         const el = (e.target as HTMLElement).closest('button')
         setRecording(true)
@@ -86,11 +90,17 @@ function Home() {
 
             const includeScreenshot = el?.id === VOICE_AND_SCREEN_ID
             // Send audio input to the main process for a response
-            window.bridge.handleAudioInput(arrayBuffer, newRequestId, includeScreenshot).catch((err) => {
+            const maybeResp = await window.bridge.handleAudioInput(arrayBuffer, newRequestId, includeScreenshot).catch((err) => {
                 console.log(err)
 
                 return undefined
             })
+
+            // if no response was returned, it means the llm request failed
+            // and audio output streamer hasn't done any cleaning up for us.
+            if (!maybeResp && !isCancelled(newRequestId)) {
+                setLoading(false)
+            }
         }
     
         audioInputMediaRecorder.start()
@@ -170,24 +180,28 @@ function Home() {
             title='Voice only'
             placement='right'
             arrow={false}
-            mouseEnterDelay={1}
             {...(recording ? { open: false } : {})}
         >
             <Button
                 id={VOICE_ONLY_ID}
                 style={{ width: "40px", height: "40px", borderRadius: "50%" }}
                 className={`no-dd-able ${recording && recordingType === VOICE_ONLY_ID ? 'pulsating-button' : ''}`}
-                onMouseDown={beginRecording}
-                onMouseUp={endRecording}
+                onClick={beginOrEndRecording}
+                disabled={recording && recordingType !== VOICE_ONLY_ID}
             >
-                <img src="img/voice.png" alt="" width="25px" />
+                <img
+                    src={recording && recordingType === VOICE_ONLY_ID ? 'img/stop.png' : 'img/voice.png'}
+                    alt=""
+                    width={recording && recordingType === VOICE_ONLY_ID ? '15px' : '25px'}
+                />
             </Button>
         </Tooltip>,
-        <Tooltip title='Hide' placement='left' arrow={false} mouseEnterDelay={2}>
+        <Tooltip title='Hide' placement='left' arrow={false}>
             <Button
                 style={{ width: "40px", height: "40px", borderRadius: "50%", color: '#999' }}
                 className='no-dd-able'
                 onClick={() => window.bridge.hideMainWindow()}
+                disabled={recording}
             >
                 —
             </Button>
@@ -203,16 +217,20 @@ function Home() {
                 id={VOICE_AND_SCREEN_ID}
                 style={{ width: "40px", height: "40px", borderRadius: "50%" }}
                 className={`no-dd-able ${recording && recordingType === VOICE_AND_SCREEN_ID ? 'pulsating-button' : ''}`}
-                onMouseDown={beginRecording}
-                onMouseUp={endRecording}
+                onClick={beginOrEndRecording}
+                disabled={recording && recordingType !== VOICE_AND_SCREEN_ID}
             >
-                <img src="img/voice-plus.png" alt="" width="25px" />
+                <img
+                    src={recording && recordingType === VOICE_AND_SCREEN_ID ? 'img/stop.png' : 'img/voice-plus.png'}
+                    alt=""
+                    width={recording && recordingType === VOICE_AND_SCREEN_ID ? '15px' : '25px'}
+                />
             </Button>
         </Tooltip>,
     ]
 
     const menu2 = [
-        <Tooltip title='Replay last answer' placement='right' arrow={false} mouseEnterDelay={2}>
+        <Tooltip title='Replay last answer' placement='right' arrow={false}>
             <Button
                 style={{ width: "40px", height: "40px", borderRadius: "50%", background: 'white' }}
                 className='no-dd-able'
@@ -230,7 +248,7 @@ function Home() {
                 onClick={pauseOrPlayAudio}
             />
         </Tooltip>,
-        <Tooltip title='Read answer' placement='left' arrow={false} mouseEnterDelay={2}>
+        <Tooltip title='Read answer' placement='left' arrow={false}>
             <Button
                 style={{ width: "40px", height: "40px", borderRadius: "50%" }}
                 className='no-dd-able'
@@ -242,18 +260,18 @@ function Home() {
     ]
 
     const menu3 = [
-        <Tooltip title='Settings' placement='right' arrow={false} mouseEnterDelay={2}>
+        <Tooltip title='Settings' placement='right' arrow={false}>
             <Button
                 style={{ width: "40px", height: "40px", borderRadius: "50%" }}
                 className='no-dd-able'
                 onClick={() => window.bridge.openSettingsWindow()}
             >
-                <img src="img/controls.png" alt="" width="15px" />
+                <img src="img/settings.png" alt="" width="18px" />
             </Button>
         </Tooltip>,
         // blank gap for spacing between buttons
         <div style={{width: '40px'}}></div>,
-        <Tooltip title='Help' placement='right' arrow={false} mouseEnterDelay={2}>
+        <Tooltip title='Help' placement='right' arrow={false}>
             <Button
                 style={{ width: "40px", height: "40px", borderRadius: "50%" }}
                 className='no-dd-able'
@@ -265,7 +283,7 @@ function Home() {
     ]
 
     return (
-        <div className='dd-able' style={{ height: '100vh'}}>
+        <div className='dd-able' style={{ height: '75vh'}}>
             {!loading && <Space style={{ marginTop: '7px'}}>
                 {navPosition == 1 && <Space className='slide-in-from-left'>{menu1}</Space>}
                 {navPosition == 2 && <Space className='slide-in-from-left'>{menu2}</Space>}
@@ -276,10 +294,11 @@ function Home() {
                     style={{ width: "40px", height: "40px", borderRadius: "50%" }}
                     className='no-dd-able' icon={<RightOutlined style={{ color: '#aaa'}} />}
                     onClick={navigateMenus}
+                    disabled={recording}
                 />
             </Space>}
 
-            {loading && <Space style={{ margin: '7px', width: '100%'}} size={110}>
+            {loading && <Space style={{ margin: '7px', width: '100%'}} size={105}>
                 <Spin indicator={loadingIcon} />
                 <Tooltip title='Cancel' placement='left' arrow={false}>
                     <Button

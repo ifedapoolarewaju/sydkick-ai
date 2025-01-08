@@ -19,7 +19,7 @@ body {
 }
 
 .pulsating-button img {
-  filter: invert(100%);
+  filter: invert(90%);
 }
 
 @keyframes pulsate {
